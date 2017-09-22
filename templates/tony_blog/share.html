@@ -1,0 +1,21 @@
+{% extends 'tony_blog/base.html' %}
+{% block my_block %}
+<div class="container">
+  {% if sent %}
+  <h1>E-mail successfully sent</h1>
+  <p>{{ post.title }} was successfully sent to {{ cd.to }}</p>
+  <br><br>
+  <p><a class="btn btn-info" href="{{ post.get_absolute_url }}">Go back to post "{{ post.title }}"</a></p>
+  {% else %}
+  <h1>Share "{{ post.title }}" by e-mail</h1>
+  <form class="" action="." method="post">
+    {{ form.as_p}}
+    {% csrf_token %}
+    <input type="submit" class="btn btn-primary" value="Send e-mail">
+  </form>
+  {% endif %}
+</div>
+<script>
+  var editor = new MediumEditor('.editable');
+</script>
+{% endblock %}

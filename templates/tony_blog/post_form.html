@@ -1,0 +1,16 @@
+{% extends "tony_blog/base.html" %}
+{% block my_block %}
+<div class="container">
+  <div class="jumbotron">
+    <h1>New Post</h1>
+  </div>
+  <form method="post">
+    {% csrf_token%}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-default">Save</button>
+  </form>
+</div>
+
+
+
+{% endblock %}

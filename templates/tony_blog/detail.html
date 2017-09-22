@@ -1,0 +1,81 @@
+{% extends 'tony_blog/base.html' %}
+{% block my_block %}
+<div class="container">
+  <div class="jumbotron">
+    <h1>{{post.title}}</h1>
+    {% if post.tags.all %}
+    Tags:
+    {% for tag in post.tags.all %}
+    <a href="{% url 'tony_blog:post_list_by_tag' tag.slug %}">{{tag.name}}</a>
+    {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+    {% endif %}
+    <p>Published {{post.publish}} by {{post.author}}</p>
+  </div>
+  {{post.body|linebreaks}}
+  <br><br>
+  <p><a  id="My_Location" class="btn btn-info" href="{% url 'tony_blog:post_share' post.id %}">Share this post</a></p>
+    <br><br>
+    {% if similar_posts %}
+    <h3>Similiar Posts:</h3>
+    {% for post in similar_posts %}
+    <p><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></p>
+    {% endfor %}
+    {% endif %}
+  <h2>{{ all_comments.count }} comment{{ all_comments.count|pluralize}}</h2>
+    {% if request.user.is_superuser %}
+    {% for comment in post.comments.all %}
+    <div class="panel panel-default">
+    <div class="panel-heading">
+    <p class="panel-title">Comment {{ forloop.counter }} by {{ comment.name }} {{comment.created }}</p>
+    </div>
+    <div class="panel-body">
+    {{comment.body|linebreaks}}
+    </div>
+  </div>
+    {% empty %}
+    <p>There are no comments yet</p>
+    {% endfor %}
+    {% else %}
+  {% for comment in comments %}
+  <div class="panel panel-default">
+  <div class="panel-heading">
+  <p class="panel-title">Comment {{ forloop.counter }} by {{ comment.name }} {{comment.created }}</p>
+  </div>
+  <div class="panel-body">
+  {{comment.body|linebreaks}}
+  </div>
+</div>
+  {% empty %}
+  <p>There are no comments yet</p>
+  {% endfor %}
+  {% if comments.has_previous %}
+  <a id="test" class="btn btn-info" href="?page={{comments.previous_page_number}}">Previous 5 Comments</a>
+  {% endif %}
+  {% if comments.has_next %}
+  <a id="test" class="btn btn-info" href="?page={{comments.next_page_number}}">Next 5 Comments</a>
+  {% endif %}
+  {% endif %}
+  {% if new_comment %}
+  <div class="alert alert-success" role="alert"><h3>Your comment was sent to our Admin to review, Thanks for your understanding.</h3></div>
+  {% endif %}
+  <h2>Add a new comment:</h2>
+  <form action="." method="post">
+    {{ comment_form.as_p}}
+    {% csrf_token %}
+  <input class="btn btn-primary" type="submit" value="Add comment">
+  </form>
+  <br><br>
+</div>
+{% if 'page=' in request.get_full_path %}
+<script>
+function scrollToElement(ele) {
+  $(window).scrollTop(ele.offset().top).scrollLeft(ele.offset().left);
+}
+scrollToElement($('#My_Location'));
+</script>
+{% endif %}
+<script>
+  var editor = new MediumEditor('.medium-editor-textarea');
+</script>
+{% endblock %}
